@@ -5,10 +5,12 @@
 #include "main.h"
 #include "map_name_popup.h"
 #include "menu.h"
+#include "rtc.h"
 #include "script.h"
 #include "sound.h"
 #include "strings.h"
 #include "task.h"
+#include "field_message_box.h"
 #include "constants/songs.h"
 
 #define DEBUG_MAIN_MENU_HEIGHT 7
@@ -16,22 +18,31 @@
 
 void Debug_ShowMainMenu(void);
 static void Debug_DestroyMainMenu(u8);
+static void DebugAction_TimeOfDay(u8);
 static void DebugAction_Cancel(u8);
 static void DebugTask_HandleMainMenuInput(u8);
 
 enum {
+    DEBUG_MENU_ITEM_TIME_OF_DAY,
     DEBUG_MENU_ITEM_CANCEL,
 };
 
+static const u8 *const test[] = {
+    "Test",
+};
+
+static const u8 gDebugText_TimeOfDay[] = _("D: Hour");
 static const u8 gDebugText_Cancel[] = _("Cancel");
 
 static const struct ListMenuItem sDebugMenuItems[] =
 {
+    [DEBUG_MENU_ITEM_TIME_OF_DAY] = {gDebugText_TimeOfDay, DEBUG_MENU_ITEM_TIME_OF_DAY},
     [DEBUG_MENU_ITEM_CANCEL] = {gDebugText_Cancel, DEBUG_MENU_ITEM_CANCEL}
 };
 
 static void (*const sDebugMenuActions[])(u8) =
 {
+    [DEBUG_MENU_ITEM_TIME_OF_DAY] = DebugAction_TimeOfDay,
     [DEBUG_MENU_ITEM_CANCEL] = DebugAction_Cancel
 };
 
@@ -118,6 +129,17 @@ static void DebugTask_HandleMainMenuInput(u8 taskId)
         PlaySE(SE_SELECT);
         Debug_DestroyMainMenu(taskId);
     }
+}
+
+static void DebugAction_TimeOfDay(u8 taskId)
+{
+    struct Task* task = &gTasks[taskId];
+    Debug_DestroyMainMenu(taskId);
+    RtcCalcLocalTime();
+    // gLocalTime.hours
+    // TODO maybe should be in script?
+    ShowFieldMessage(test[0]); // prints the test message
+    // TODO how do I delay before I delete
 }
 
 static void DebugAction_Cancel(u8 taskId)
