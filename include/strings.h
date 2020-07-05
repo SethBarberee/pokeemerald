@@ -2984,4 +2984,18 @@ extern const u8 gText_Smartness[];
 extern const u8 gText_Cuteness[];
 extern const u8 gText_Beauty3[];
 
+// Physical/Special
+extern const u8 gText_Physical[];
+extern const u8 gText_Special[];
+extern const u8 gText_Other[];
+extern const u8 gText_Split[];
+
+// Time of day
+extern const u8 gTime_Morning[];
+extern const u8 gTime_Day[];
+extern const u8 gTime_Night[];
+
+// PC from Menu
+extern const u8 gText_MenuPC[];
+
 #endif // GUARD_STRINGS_H

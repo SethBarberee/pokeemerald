@@ -1825,4 +1825,5 @@ const u8 gText_Split[] = _("SPLIT");
 const u8 gTime_Morning[] = _("Morning$");
 const u8 gTime_Day[] = _("Day$");
 const u8 gTime_Night[] = _("Night$");
+const u8 gText_MenuPC[] = _("PC");
 

@@ -466,7 +466,6 @@ EWRAM_DATA static bool8 sCanOnlyMove = 0;
 
 // This file's functions.
 static void CreatePCMenu(u8 whichMenu, s16 *windowIdPtr);
-static void Cb2_EnterPSS(u8 boxOption);
 static u8 GetCurrentBoxOption(void);
 static u8 HandleInput(void);
 static u8 sub_80CDC2C(void);
@@ -1849,14 +1848,22 @@ static void FieldCb_ReturnToPcMenu(void)
 {
     u8 taskId;
     MainCallback vblankCb = gMain.vblankCallback;
-
-    SetVBlankCallback(NULL);
-    taskId = CreateTask(Task_PokemonStorageSystemPC, 80);
-    gTasks[taskId].data[0] = 0;
-    gTasks[taskId].data[1] = sPreviousBoxOption;
-    Task_PokemonStorageSystemPC(taskId);
-    SetVBlankCallback(vblankCb);
-    FadeInFromBlack();
+    if (FlagGet(FLAG_POKEMONPCMENU)==TRUE)
+    {
+        SetVBlankCallback(NULL);
+        taskId = CreateTask(Task_PokemonStorageSystemPC, 80);
+        gTasks[taskId].data[0] = 0;
+        gTasks[taskId].data[1] = sPreviousBoxOption;
+        Task_PokemonStorageSystemPC(taskId);
+        SetVBlankCallback(vblankCb);
+        FadeInFromBlack();
+    }
+    else
+    {
+        SetVBlankCallback(CB2_ReturnToField);
+        FadeInFromBlack();
+        DisableInterrupts(FLAG_POKEMONPCMENU);
+    }
 }
 
 static void CreatePCMenu(u8 whichMenu, s16 *windowIdPtr)
@@ -2153,7 +2160,7 @@ static void Cb2_PSS(void)
     BuildOamBuffer();
 }
 
-static void Cb2_EnterPSS(u8 boxOption)
+void Cb2_EnterPSS(u8 boxOption)
 {
     ResetTasks();
     sCurrentBoxOption = boxOption;
