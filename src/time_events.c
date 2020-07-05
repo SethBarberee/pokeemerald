@@ -116,3 +116,20 @@ void UpdateBirchState(u16 days)
     *state += days;
     *state %= 7;
 }
+
+u8 GetTimeOfDay(void)
+{
+    RtcCalcLocalTime();
+    if((gLocalTime.hours < DAY_START) && (gLocalTime.hours > MORNING_START))
+    {
+        return TIME_MORNING;
+    }
+    else if(gLocalTime.hours < NIGHT_START)
+    {
+        return TIME_DAY;
+    }
+    else 
+    {
+        return TIME_NIGHT;
+    }
+}

@@ -10,6 +10,7 @@
 #include "sound.h"
 #include "strings.h"
 #include "task.h"
+#include "time_events.h"
 #include "field_message_box.h"
 #include "constants/songs.h"
 
@@ -19,30 +20,32 @@
 void Debug_ShowMainMenu(void);
 static void Debug_DestroyMainMenu(u8);
 static void DebugAction_TimeOfDay(u8);
+static void DebugAction_PaletteTest(u8);
 static void DebugAction_Cancel(u8);
 static void DebugTask_HandleMainMenuInput(u8);
 
 enum {
     DEBUG_MENU_ITEM_TIME_OF_DAY,
+    DEBUG_MENU_ITEM_PALETTE_TEST,
     DEBUG_MENU_ITEM_CANCEL,
 };
 
-static const u8 *const test[] = {
-    "Test",
-};
 
 static const u8 gDebugText_TimeOfDay[] = _("D: Hour");
+static const u8 gDebugText_PaletteTest[] = _("Palette Test");
 static const u8 gDebugText_Cancel[] = _("Cancel");
 
 static const struct ListMenuItem sDebugMenuItems[] =
 {
     [DEBUG_MENU_ITEM_TIME_OF_DAY] = {gDebugText_TimeOfDay, DEBUG_MENU_ITEM_TIME_OF_DAY},
+    [DEBUG_MENU_ITEM_PALETTE_TEST] = {gDebugText_PaletteTest, DEBUG_MENU_ITEM_PALETTE_TEST},
     [DEBUG_MENU_ITEM_CANCEL] = {gDebugText_Cancel, DEBUG_MENU_ITEM_CANCEL}
 };
 
 static void (*const sDebugMenuActions[])(u8) =
 {
     [DEBUG_MENU_ITEM_TIME_OF_DAY] = DebugAction_TimeOfDay,
+    [DEBUG_MENU_ITEM_PALETTE_TEST] = DebugAction_PaletteTest,
     [DEBUG_MENU_ITEM_CANCEL] = DebugAction_Cancel
 };
 
@@ -131,15 +134,34 @@ static void DebugTask_HandleMainMenuInput(u8 taskId)
     }
 }
 
+static void DebugAction_PaletteTest(u8 taskId)
+{
+    Debug_DestroyMainMenu(taskId);
+    // TODO load different palettes
+}
+
 static void DebugAction_TimeOfDay(u8 taskId)
 {
     struct Task* task = &gTasks[taskId];
     Debug_DestroyMainMenu(taskId);
-    RtcCalcLocalTime();
+    if(GetTimeOfDay() == TIME_MORNING)
+    {
+        // TODO
+        ShowFieldMessage(gTime_Morning);
+    }
+    else if (GetTimeOfDay() == TIME_DAY)
+    {
+        // TODO
+        ShowFieldMessage(gTime_Day);
+    }
+    else 
+    {
+        // TODO
+        ShowFieldMessage(gTime_Night);
+    }
     // gLocalTime.hours
+    // TODO how would I display
     // TODO maybe should be in script?
-    ShowFieldMessage(test[0]); // prints the test message
-    // TODO how do I delay before I delete
 }
 
 static void DebugAction_Cancel(u8 taskId)

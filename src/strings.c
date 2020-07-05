@@ -1818,3 +1818,11 @@ const u8 gText_Answer[] = _("ANSWER");
 const u8 gText_PokeBalls[] = _("POKé BALLS");
 const u8 gText_Berry[] = _("BERRY");
 const u8 gText_Berries[] = _("BERRIES");
+const u8 gText_Physical[] = _("PHY");
+const u8 gText_Special[] = _("SPE");
+const u8 gText_Other[] = _("OTH");
+const u8 gText_Split[] = _("SPLIT");
+const u8 gTime_Morning[] = _("Morning$");
+const u8 gTime_Day[] = _("Day$");
+const u8 gTime_Night[] = _("Night$");
+
