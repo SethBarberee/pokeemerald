@@ -5,13 +5,16 @@
 #include "main.h"
 #include "map_name_popup.h"
 #include "menu.h"
+#include "palette.h"
 #include "rtc.h"
 #include "script.h"
 #include "sound.h"
 #include "strings.h"
 #include "task.h"
+#include "util.h"
 #include "time_events.h"
 #include "field_message_box.h"
+#include "constants/rgb.h"
 #include "constants/songs.h"
 
 #define DEBUG_MAIN_MENU_HEIGHT 7
@@ -137,7 +140,28 @@ static void DebugTask_HandleMainMenuInput(u8 taskId)
 static void DebugAction_PaletteTest(u8 taskId)
 {
     Debug_DestroyMainMenu(taskId);
-    // TODO load different palettes
+    if(GetTimeOfDay() == TIME_MORNING)
+    {
+        BlendPalette(0, 16, 12, RGB(150, 0, 0)); // Darken BG 0
+        BlendPalette(17, 16, 12, RGB(150, 0, 0)); // Darken BG 1 
+        BlendPalette(34, 16, 12, RGB(150, 0, 0)); // Darken BG 2
+        BlendPalette(256, 16, 12, RGB(150, 0, 0)); // Darken Main character
+    }
+    else if (GetTimeOfDay() == TIME_DAY)
+    {
+        // TODO
+        //BlendPalette(0, 16, 12, RGB(0, 0, 0)); // Darken BG 0
+        //BlendPalette(17, 16, 12, RGB(0, 0, 0)); // Darken BG 1 
+        //BlendPalette(34, 16, 12, RGB(0, 0, 0)); // Darken BG 2
+        //BlendPalette(256, 16, 12, RGB(0, 0, 0)); // Darken Main character
+    }
+    else 
+    {
+        BlendPalette(0, 16, 12, RGB(0, 0, 0)); // Darken BG 0
+        BlendPalette(17, 16, 12, RGB(0, 0, 0)); // Darken BG 1 
+        BlendPalette(34, 16, 12, RGB(0, 0, 0)); // Darken BG 2
+        BlendPalette(256, 16, 12, RGB(0, 0, 0)); // Darken Main character
+    }
 }
 
 static void DebugAction_TimeOfDay(u8 taskId)
