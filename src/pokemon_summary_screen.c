@@ -503,16 +503,16 @@ static const struct WindowTemplate sSummaryTemplate[] =
     [PSS_LABEL_WINDOW_MOVES_POWER_ACC] = {
         .bg = 0,
         .tilemapLeft = 1,
-        .tilemapTop = 15,
+        .tilemapTop = 14,
         .width = 9,
-        .height = 4,
+        .height = 6,
         .paletteNum = 6,
         .baseBlock = 331,
     },
     [PSS_LABEL_WINDOW_MOVES_APPEAL_JAM] = {
         .bg = 0,
         .tilemapLeft = 1,
-        .tilemapTop = 15,
+        .tilemapTop = 14,
         .width = 5,
         .height = 4,
         .paletteNum = 6,
@@ -2854,6 +2854,7 @@ static void PrintPageNamesAndStats(void)
     PrintTextOnWindow(PSS_LABEL_WINDOW_POKEMON_SKILLS_STATUS, gText_Status, 2, 1, 0, 1);
     PrintTextOnWindow(PSS_LABEL_WINDOW_MOVES_POWER_ACC, gText_Power, 0, 1, 0, 1);
     PrintTextOnWindow(PSS_LABEL_WINDOW_MOVES_POWER_ACC, gText_Accuracy2, 0, 17, 0, 1);
+    PrintTextOnWindow(PSS_LABEL_WINDOW_MOVES_POWER_ACC, gText_Split, 0, 33, 0, 1);
     PrintTextOnWindow(PSS_LABEL_WINDOW_MOVES_APPEAL_JAM, gText_Appeal, 0, 1, 0, 1);
     PrintTextOnWindow(PSS_LABEL_WINDOW_MOVES_APPEAL_JAM, gText_Jam, 0, 17, 0, 1);
 }
@@ -3532,7 +3533,7 @@ static void PrintMovePowerAndAccuracy(u16 moveIndex)
     const u8 *text;
     if (moveIndex != 0)
     {
-        FillWindowPixelRect(PSS_LABEL_WINDOW_MOVES_POWER_ACC, PIXEL_FILL(0), 53, 0, 19, 32);
+        FillWindowPixelRect(PSS_LABEL_WINDOW_MOVES_POWER_ACC, PIXEL_FILL(0), 53, 0, 19, 48); // 48 = (16 x 3 rows)
 
         if (gBattleMoves[moveIndex].power < 2)
         {
@@ -3557,6 +3558,25 @@ static void PrintMovePowerAndAccuracy(u16 moveIndex)
         }
 
         PrintTextOnWindow(PSS_LABEL_WINDOW_MOVES_POWER_ACC, text, 53, 17, 0, 0);
+
+        // display Physicality
+        if (gBattleMoves[moveIndex].physicality == 0)
+        {
+            // Physical move
+            text = gText_Physical;
+        }
+        else if (gBattleMoves[moveIndex].physicality == 1)
+        {
+            // Special move
+            text = gText_Special;
+        }
+        else
+        {
+            // Status/Other move
+            text = gText_Other;
+        }
+
+        PrintTextOnWindow(PSS_LABEL_WINDOW_MOVES_POWER_ACC, text, 53, 33, 0, 0);
     }
 }
 
