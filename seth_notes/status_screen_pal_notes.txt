@@ -1,0 +1,12 @@
+# Pokemon Info Screen
+Line 6 (255 255 255) -> FG Color for Profile, Ability, Trainer Memo
+Line 15 (16 148 115) -> 4th Stripe for Fade from Blue to Dark Green
+Line 16 (156 222 164) -> BG of Box for Pokemon Sprite, BG for OT/ID #, Ability
+Name, and Trainer Memo Border Color
+Line 18 (49 139 115) -> darkest green (furthest right and furthest left of
+labels)
+Line 19 (0 106 98) -> Screen BG
+
+# Battle Moves
+Line 59 (222 24 238) -> BG for headers
+Line 60 - 62 -> Fade Stripes

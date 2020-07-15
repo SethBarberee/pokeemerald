@@ -1,0 +1,3 @@
+Line 17: Frame border color
+Line 19: Main background of frame
+Line 6: Next Line cursor color
