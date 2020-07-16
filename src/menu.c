@@ -12,6 +12,7 @@
 #include "pokedex.h"
 #include "pokemon_icon.h"
 #include "region_map.h"
+#include "rtc.h"
 #include "sound.h"
 #include "string_util.h"
 #include "strings.h"
@@ -2166,6 +2167,11 @@ void BufferSaveMenuText(u8 textId, u8 *dest, u8 color)
             }
             *string = flagCount + CHAR_0;
             *endOfString = EOS;
+            break;
+        case SAVE_MENU_TIME:
+            string = ConvertIntToDecimalStringN(string, gLocalTime.hours, STR_CONV_MODE_LEFT_ALIGN, 3);
+            *(string++) = CHAR_COLON;
+            ConvertIntToDecimalStringN(string, gLocalTime.minutes, STR_CONV_MODE_LEADING_ZEROS, 2);
             break;
     }
 }

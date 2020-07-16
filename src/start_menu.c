@@ -92,6 +92,8 @@ EWRAM_DATA static u8 sSaveDialogTimer = 0;
 EWRAM_DATA static bool8 sSavingComplete = FALSE;
 EWRAM_DATA static u8 sSaveInfoWindowId = 0;
 
+EWRAM_DATA static u8 sTimeWindowId = 0;
+
 // Menu action callbacks
 static bool8 StartMenuPokedexCallback(void);
 static bool8 StartMenuPokemonCallback(void);
@@ -196,6 +198,8 @@ static const struct WindowTemplate sUnknown_085105AC[] =
 
 static const struct WindowTemplate sSaveInfoWindowTemplate = {0, 1, 1, 0xE, 0xA, 0xF, 8};
 
+static const struct WindowTemplate sTimeWindowTemplate = {0, 1, 1, 0xE, 7, 0xF, 8};
+
 // Local functions
 static void BuildStartMenuActions(void);
 static void AddStartMenuAction(u8 action);
@@ -227,6 +231,8 @@ static bool32 InitSaveWindowAfterLinkBattle(u8 *par1);
 static void CB2_SaveAfterLinkBattle(void);
 static void ShowSaveInfoWindow(void);
 static void RemoveSaveInfoWindow(void);
+static void ShowTimeInfoWindow(void);
+static void RemoveTimeInfoWindow(void);
 static void HideStartMenuWindow(void);
 
 void SetDexPokemonPokenavFlags(void) // unused
@@ -408,6 +414,8 @@ static void RemoveExtraStartMenuWindows(void)
         ClearStdWindowAndFrameToTransparent(sBattlePyramidFloorWindowId, FALSE);
         RemoveWindow(sBattlePyramidFloorWindowId);
     }
+    ClearStdWindowAndFrameToTransparent(sTimeWindowId, FALSE);
+    RemoveWindow(sTimeWindowId);
 }
 
 static bool32 PrintStartMenuActions(s8 *pIndex, u32 count)
@@ -465,6 +473,7 @@ static bool32 InitStartMenuStep(void)
             ShowSafariBallsWindow();
         if (InBattlePyramid())
             ShowPyramidFloorWindow();
+        ShowTimeInfoWindow();
         sInitStartMenuData[0]++;
         break;
     case 4:
@@ -698,7 +707,7 @@ static bool8 StartMenuPlayerNameCallback(void)
 
 static bool8 StartMenuSaveCallback(void)
 {
-    if (InBattlePyramid())
+    //if (InBattlePyramid()) // Make sure we clear our extra menu
         RemoveExtraStartMenuWindows();
 
     gMenuCallback = SaveStartCallback; // Display save menu
@@ -1375,6 +1384,45 @@ static void RemoveSaveInfoWindow(void)
     ClearStdWindowAndFrame(sSaveInfoWindowId, FALSE);
     RemoveWindow(sSaveInfoWindowId);
 }
+
+static void ShowTimeInfoWindow(void)
+{
+    struct WindowTemplate sTimeWindow = sTimeWindowTemplate;
+    u32 xOffset;
+    u32 yOffset;
+
+    sTimeWindowId = AddWindow(&sTimeWindow);
+    DrawStdWindowFrame(sTimeWindowId, FALSE);
+
+
+    // Print region name
+    yOffset = 1;
+    BufferSaveMenuText(SAVE_MENU_LOCATION, gStringVar4, TEXT_COLOR_GREEN);
+    AddTextPrinterParameterized(sTimeWindowId, 1, gStringVar4, 0, yOffset, 0xFF, NULL);
+
+    // Print player name
+    yOffset += 16;
+    AddTextPrinterParameterized(sTimeWindowId, 1, gText_SavingPlayer, 0, yOffset, 0xFF, NULL);
+    BufferSaveMenuText(SAVE_MENU_NAME, gStringVar4, TEXT_COLOR_GREEN);
+    xOffset = GetStringRightAlignXOffset(1, gStringVar4, 0x70);
+    PrintPlayerNameOnWindow(sTimeWindowId, gStringVar4, xOffset, yOffset);
+
+    // Print Time of Day
+    yOffset += 16;
+    AddTextPrinterParameterized(sTimeWindowId, 1, gText_SavingTime, 0, yOffset, 0xFF, NULL);
+    BufferSaveMenuText(SAVE_MENU_TIME, gStringVar4, TEXT_COLOR_GREEN);
+    xOffset = GetStringRightAlignXOffset(1, gStringVar4, 0x70);
+    AddTextPrinterParameterized(sTimeWindowId, 1, gStringVar4, xOffset, yOffset, 0xFF, NULL);
+
+    CopyWindowToVram(sTimeWindowId, 2);
+}
+
+static void RemoveTimeInfoWindow(void)
+{
+    ClearStdWindowAndFrame(sTimeWindowId, FALSE);
+    RemoveWindow(sTimeWindowId);
+}
+
 
 static void Task_WaitForBattleTowerLinkSave(u8 taskId)
 {
