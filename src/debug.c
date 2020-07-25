@@ -148,25 +148,27 @@ static void DebugAction_PaletteTest(u8 taskId)
     Debug_DestroyMainMenu(taskId);
     if(GetTimeOfDay() == TIME_MORNING)
     {
-        BlendPalette(0, 16, 12, RGB(150, 0, 0)); // Darken BG 0
-        BlendPalette(17, 16, 12, RGB(150, 0, 0)); // Darken BG 1 
-        BlendPalette(34, 16, 12, RGB(150, 0, 0)); // Darken BG 2
-        BlendPalette(256, 16, 12, RGB(150, 0, 0)); // Darken Main character
+        int i;
+        for(i = 0; i < 256; i = i + 17){
+            BlendPalette(i, 16, 12, RGB(150, 0, 0)); // Darken all backgrounds
+        }
+        for(i = 256; i < 512; i = i + 17){
+            BlendPalette(i, 16, 12, RGB(150, 0, 0)); // Darken all object palettes
+        }
     }
-    else if (GetTimeOfDay() == TIME_DAY)
+    else if (GetTimeOfDay() == TIME_NIGHT)
     {
-        // TODO
-        //BlendPalette(0, 16, 12, RGB(0, 0, 0)); // Darken BG 0
-        //BlendPalette(17, 16, 12, RGB(0, 0, 0)); // Darken BG 1 
-        //BlendPalette(34, 16, 12, RGB(0, 0, 0)); // Darken BG 2
-        //BlendPalette(256, 16, 12, RGB(0, 0, 0)); // Darken Main character
+        int i;
+        for(i = 0; i < 256; i = i + 17){
+            BlendPalette(i, 16, 9, RGB(0, 0, 0)); // Darken all backgrounds
+        }
+        for(i = 256; i < 512; i = i + 17){
+            BlendPalette(i, 16, 9, RGB(0, 0, 0)); // Darken all object palletes
+        }
     }
     else 
     {
-        BlendPalette(0, 16, 12, RGB(0, 0, 0)); // Darken BG 0
-        BlendPalette(17, 16, 12, RGB(0, 0, 0)); // Darken BG 1 
-        BlendPalette(34, 16, 12, RGB(0, 0, 0)); // Darken BG 2
-        BlendPalette(256, 16, 12, RGB(0, 0, 0)); // Darken Main character
+        // No op
     }
 }
 
