@@ -178,6 +178,17 @@ EWRAM_DATA u8 gLastViewedMonIndex = 0;
 static EWRAM_DATA u8 sMoveSlotToReplace = 0;
 ALIGNED(4) static EWRAM_DATA u8 sUnknownTaskId = 0;
 
+// Used to display letter for stat
+static const u8 StatLetter[][6] = 
+{
+    _("F"),
+    _("D"),
+    _("C"),
+    _("B"),
+    _("A"),
+    _("S")
+};
+
 // forward declarations
 static bool8 LoadGraphics(void);
 static void CB2_InitSummaryScreen(void);
@@ -299,6 +310,7 @@ static void SpriteCb_MoveSelector(struct Sprite *sprite);
 static void DestroyMoveSelectorSprites(u8 firstArrayId);
 static void SetMainMoveSelectorColor(u8 whichColor);
 static void KeepMoveSelectorVisible(u8 firstSpriteId);
+static void CalcLetter(u8 *dst, u32 stat, u8 mode, u32 strId, u32 n);
 
 // const rom data
 #include "data/text/move_descriptions.h"
@@ -1511,10 +1523,14 @@ static void Task_HandleInput(u8 taskId)
         else if ((gMain.newKeys & DPAD_LEFT) || GetLRKeysPressed() == MENU_L_PRESSED)
         {
             ChangePage(taskId, -1);
+            if (FlagGet(FLAG_STATNUMBERTOGGLE) == TRUE)
+                FlagClear(FLAG_STATNUMBERTOGGLE);
         }
         else if ((gMain.newKeys & DPAD_RIGHT) || GetLRKeysPressed() == MENU_R_PRESSED)
         {
             ChangePage(taskId, 1);
+            if (FlagGet(FLAG_STATNUMBERTOGGLE) == TRUE)
+                FlagClear(FLAG_STATNUMBERTOGGLE);
         }
         else if (gMain.newKeys & A_BUTTON)
         {
@@ -1538,6 +1554,8 @@ static void Task_HandleInput(u8 taskId)
             StopPokemonAnimations();
             PlaySE(SE_SELECT);
             BeginCloseSummaryScreen(taskId);
+            if (FlagGet(FLAG_STATNUMBERTOGGLE) == TRUE)
+                FlagClear(FLAG_STATNUMBERTOGGLE);
         }
         // show IVs/EVs/stats on button presses
         else if (gMain.newKeys & R_BUTTON)
@@ -1545,6 +1563,14 @@ static void Task_HandleInput(u8 taskId)
             if (sMonSummaryScreen->currPageIndex == PSS_PAGE_SKILLS)
             {
                 BufferIvOrEvStats(0);
+                if (FlagGet(FLAG_STATNUMBERTOGGLE) == TRUE)
+                {
+                    FlagClear(FLAG_STATNUMBERTOGGLE);
+                } 
+                else
+                {
+                    FlagSet(FLAG_STATNUMBERTOGGLE);
+                }
             }
         }
         else if (gMain.newKeys & L_BUTTON)
@@ -1552,6 +1578,14 @@ static void Task_HandleInput(u8 taskId)
             if (sMonSummaryScreen->currPageIndex == PSS_PAGE_SKILLS)
             {
                 BufferIvOrEvStats(1);
+                if (FlagGet(FLAG_STATNUMBERTOGGLE) == TRUE)
+                {
+                    FlagClear(FLAG_STATNUMBERTOGGLE);
+                } 
+                else
+                {
+                    FlagSet(FLAG_STATNUMBERTOGGLE);
+                }
             }
         }
         else if (gMain.newKeys & START_BUTTON)
@@ -1559,6 +1593,7 @@ static void Task_HandleInput(u8 taskId)
             if (sMonSummaryScreen->currPageIndex == PSS_PAGE_SKILLS)
             {
                 BufferIvOrEvStats(2);
+                FlagClear(FLAG_STATNUMBERTOGGLE);
             }
         }
     }
@@ -4197,15 +4232,33 @@ static void BufferIvOrEvStats(u8 mode)
     {
     case 0:
     case 1:
-        BufferStat(gStringVar1, 0, hp, 0, 7);
-        BufferStat(gStringVar2, 0, atk, 1, 7);
-        BufferStat(gStringVar3, 0, def, 2, 7);
+        if (FlagGet(FLAG_STATNUMBERTOGGLE) == FALSE)
+        {
+            CalcLetter(gStringVar1, hp, mode, 0, 7); // TODO SETH
+            CalcLetter(gStringVar2, atk, mode, 1, 7); // TODO SETH
+            CalcLetter(gStringVar3, def, mode, 2, 7); // TODO SETH
+        }
+        else 
+        {
+            BufferStat(gStringVar1, 0, hp, 0, 7);
+            BufferStat(gStringVar2, 0, atk, 1, 7);
+            BufferStat(gStringVar3, 0, def, 2, 7);
+        }
         DynamicPlaceholderTextUtil_ExpandPlaceholders(gStringVar4, sStatsLeftColumnLayoutIVEV);
         PrintLeftColumnStats();
 
-        BufferStat(gStringVar1, 0, spA, 0, 3);
-        BufferStat(gStringVar2, 0, spD, 1, 3);
-        BufferStat(gStringVar3, 0, spe, 2, 3);
+        if (FlagGet(FLAG_STATNUMBERTOGGLE) == FALSE)
+        {
+            CalcLetter(gStringVar1, spA, mode, 0, 7); // TODO SETH
+            CalcLetter(gStringVar2, spD, mode, 1, 7); // TODO SETH
+            CalcLetter(gStringVar3, spe, mode, 2, 7); // TODO SETH
+        }
+        else
+        {
+            BufferStat(gStringVar1, 0, spA, 0, 3);
+            BufferStat(gStringVar2, 0, spD, 1, 3);
+            BufferStat(gStringVar3, 0, spe, 2, 3);
+        }
         DynamicPlaceholderTextUtil_ExpandPlaceholders(gStringVar4, sStatsRightColumnLayout);
         PrintRightColumnStats();
         break;
@@ -4245,4 +4298,31 @@ static void BufferStat(u8 *dst, s8 natureMod, u32 stat, u32 strId, u32 n)
 
     ConvertIntToDecimalStringN(txtPtr, stat, STR_CONV_MODE_RIGHT_ALIGN, n);
     DynamicPlaceholderTextUtil_SetPlaceholderPtr(strId, dst);
+}
+
+static void CalcLetter(u8 *dst, u32 stat, u8 mode, u32 strId, u32 n)
+{
+    u8 divider;
+    u8 index;
+    u8 remainder;
+    switch(mode)
+    {
+        case 0:
+            // IV Letter
+            divider = 7; // range of 7 for each letter
+            break;
+        case 1:
+            // EV Letter
+            divider = 63; // range of 63 for each letter
+            break;
+        case 2:
+            return;
+        default:
+            return;
+    }
+    // TODO optimize but this'll do for now
+    index = stat / divider;
+    remainder = stat % divider;
+    index = index + remainder;
+    StringCopy(dst, StatLetter[index]);
 }
