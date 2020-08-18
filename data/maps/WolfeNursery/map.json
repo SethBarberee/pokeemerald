@@ -38,7 +38,7 @@
       "x": 12,
       "y": 16,
       "elevation": 3,
-      "movement_type": "MOVEMENT_TYPE_WANDER_AROUND",
+      "movement_type": "MOVEMENT_TYPE_FACE_UP",
       "movement_range_x": 1,
       "movement_range_y": 1,
       "trainer_type": "TRAINER_TYPE_NORMAL",
@@ -67,6 +67,14 @@
       "elevation": 3,
       "item": "ITEM_POTION",
       "flag": "FLAG_SYS_POKEMON_GET"
+    },
+    {
+      "type": "sign",
+      "x": 13,
+      "y": 5,
+      "elevation": 0,
+      "player_facing_dir": "BG_EVENT_PLAYER_FACING_ANY",
+      "script": "WolfeNursery_ShopSign"
     }
   ]
 }
