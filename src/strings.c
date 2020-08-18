@@ -1828,4 +1828,7 @@ const u8 gTime_Morning[] = _("Morning$");
 const u8 gTime_Day[] = _("Day$");
 const u8 gTime_Night[] = _("Night$");
 const u8 gText_MenuPC[] = _("PC");
+const u8 gText_StatDisplay[] = _("STAT DISPLAY");
+const u8 gText_StatDisplayLetter[] = _("{COLOR GREEN}{SHADOW LIGHT_GREEN}LETTER");
+const u8 gText_StatDisplayNumber[] = _("{COLOR GREEN}{SHADOW LIGHT_GREEN}NUMBER");
 

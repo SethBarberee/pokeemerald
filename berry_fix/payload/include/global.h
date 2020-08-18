@@ -141,6 +141,12 @@ enum
 
 enum
 {
+    OPTIONS_STATDISPLAY_LETTER,
+    OPTIONS_STATDISPLAY_NUMBER,
+};
+
+enum
+{
     BAG_ITEMS = 1,
     BAG_POKEBALLS,
     BAG_TMsHMs,
@@ -836,6 +842,7 @@ struct SaveBlock2 /* 0x02024EA4 */
     /*0x98*/ struct Time localTimeOffset;
     /*0xA0*/ struct Time lastBerryTreeUpdate;
     /*0xA8*/ struct BattleTowerData battleTower;
+             u16 optionsStatDisplay:1; // whether to display
 };
 
 struct MapPosition

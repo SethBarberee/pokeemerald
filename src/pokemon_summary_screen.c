@@ -1523,14 +1523,10 @@ static void Task_HandleInput(u8 taskId)
         else if ((gMain.newKeys & DPAD_LEFT) || GetLRKeysPressed() == MENU_L_PRESSED)
         {
             ChangePage(taskId, -1);
-            if (FlagGet(FLAG_STATNUMBERTOGGLE) == TRUE)
-                FlagClear(FLAG_STATNUMBERTOGGLE);
         }
         else if ((gMain.newKeys & DPAD_RIGHT) || GetLRKeysPressed() == MENU_R_PRESSED)
         {
             ChangePage(taskId, 1);
-            if (FlagGet(FLAG_STATNUMBERTOGGLE) == TRUE)
-                FlagClear(FLAG_STATNUMBERTOGGLE);
         }
         else if (gMain.newKeys & A_BUTTON)
         {
@@ -1554,8 +1550,6 @@ static void Task_HandleInput(u8 taskId)
             StopPokemonAnimations();
             PlaySE(SE_SELECT);
             BeginCloseSummaryScreen(taskId);
-            if (FlagGet(FLAG_STATNUMBERTOGGLE) == TRUE)
-                FlagClear(FLAG_STATNUMBERTOGGLE);
         }
         // show IVs/EVs/stats on button presses
         else if (gMain.newKeys & R_BUTTON)
@@ -1563,14 +1557,6 @@ static void Task_HandleInput(u8 taskId)
             if (sMonSummaryScreen->currPageIndex == PSS_PAGE_SKILLS)
             {
                 BufferIvOrEvStats(0);
-                if (FlagGet(FLAG_STATNUMBERTOGGLE) == TRUE)
-                {
-                    FlagClear(FLAG_STATNUMBERTOGGLE);
-                } 
-                else
-                {
-                    FlagSet(FLAG_STATNUMBERTOGGLE);
-                }
             }
         }
         else if (gMain.newKeys & L_BUTTON)
@@ -1578,14 +1564,6 @@ static void Task_HandleInput(u8 taskId)
             if (sMonSummaryScreen->currPageIndex == PSS_PAGE_SKILLS)
             {
                 BufferIvOrEvStats(1);
-                if (FlagGet(FLAG_STATNUMBERTOGGLE) == TRUE)
-                {
-                    FlagClear(FLAG_STATNUMBERTOGGLE);
-                } 
-                else
-                {
-                    FlagSet(FLAG_STATNUMBERTOGGLE);
-                }
             }
         }
         else if (gMain.newKeys & START_BUTTON)
@@ -4232,7 +4210,7 @@ static void BufferIvOrEvStats(u8 mode)
     {
     case 0:
     case 1:
-        if (FlagGet(FLAG_STATNUMBERTOGGLE) == FALSE)
+        if (gSaveBlock2Ptr->optionsStatDisplay == OPTIONS_STATDISPLAY_LETTER)
         {
             CalcLetter(gStringVar1, hp, mode, 0, 7); // TODO SETH
             CalcLetter(gStringVar2, atk, mode, 1, 7); // TODO SETH
@@ -4247,7 +4225,7 @@ static void BufferIvOrEvStats(u8 mode)
         DynamicPlaceholderTextUtil_ExpandPlaceholders(gStringVar4, sStatsLeftColumnLayoutIVEV);
         PrintLeftColumnStats();
 
-        if (FlagGet(FLAG_STATNUMBERTOGGLE) == FALSE)
+        if (gSaveBlock2Ptr->optionsStatDisplay == OPTIONS_STATDISPLAY_LETTER)
         {
             CalcLetter(gStringVar1, spA, mode, 0, 7); // TODO SETH
             CalcLetter(gStringVar2, spD, mode, 1, 7); // TODO SETH
