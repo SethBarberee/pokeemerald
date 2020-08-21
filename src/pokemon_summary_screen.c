@@ -1571,7 +1571,6 @@ static void Task_HandleInput(u8 taskId)
             if (sMonSummaryScreen->currPageIndex == PSS_PAGE_SKILLS)
             {
                 BufferIvOrEvStats(2);
-                FlagClear(FLAG_STATNUMBERTOGGLE);
             }
         }
     }
