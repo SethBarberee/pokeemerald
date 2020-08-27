@@ -4298,8 +4298,6 @@ static void CalcLetter(u8 *dst, u32 stat, u8 mode, u32 strId, u32 n)
             return;
     }
     // TODO optimize but this'll do for now
-    index = stat / divider;
-    remainder = stat % divider;
-    index = index + remainder;
+    index = (stat / divider) + ((stat % divider) != 0);
     StringCopy(dst, StatLetter[index]);
 }
