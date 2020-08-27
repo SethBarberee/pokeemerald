@@ -18,8 +18,6 @@
 
 static void UpdateObjectReflectionSprite(struct Sprite *);
 static void LoadObjectReflectionPalette(struct ObjectEvent *objectEvent, struct Sprite *sprite);
-static void LoadObjectHighBridgeReflectionPalette(struct ObjectEvent *, u8);
-static void LoadObjectRegularReflectionPalette(struct ObjectEvent *, u8);
 static void sub_81561FC(struct Sprite *, u8, u8);
 static void FadeFootprintsTireTracks_Step0(struct Sprite *);
 static void FadeFootprintsTireTracks_Step1(struct Sprite *);
@@ -27,8 +25,8 @@ static void UpdateFeetInFlowingWaterFieldEffect(struct Sprite *);
 static void UpdateAshFieldEffect_Step0(struct Sprite *);
 static void UpdateAshFieldEffect_Step1(struct Sprite *);
 static void UpdateAshFieldEffect_Step2(struct Sprite *);
-static void SynchroniseSurfAnim(struct ObjectEvent *, struct Sprite *);
-static void sub_81556E8(struct ObjectEvent *, struct Sprite *);
+void SynchroniseSurfAnim(struct ObjectEvent *, struct Sprite *);
+void sub_81556E8(struct ObjectEvent *, struct Sprite *);
 static void CreateBobbingEffect(struct ObjectEvent *, struct Sprite *, struct Sprite *);
 static void sub_8155850(struct Sprite *);
 static u32 ShowDisguiseFieldEffect(u8, u8);
@@ -65,6 +63,8 @@ static s16 GetReflectionVerticalOffset(struct ObjectEvent *objectEvent)
     return GetObjectEventGraphicsInfo(objectEvent->graphicsId)->height - 2;
 }
 
+#define OBJ_EVENT_PAL_TAG_10 0x1102
+
 void LoadObjectReflectionPalette(struct ObjectEvent *objectEvent, struct Sprite *sprite)
 {
     u8 bridgeType;
@@ -73,12 +73,13 @@ void LoadObjectReflectionPalette(struct ObjectEvent *objectEvent, struct Sprite 
     if (!GetObjectEventGraphicsInfo(objectEvent->graphicsId)->disableReflectionPaletteLoad && ((bridgeType = MetatileBehavior_GetBridgeType(objectEvent->previousMetatileBehavior)) || (bridgeType = MetatileBehavior_GetBridgeType(objectEvent->currentMetatileBehavior))))
     {
         sprite->data[2] = bridgeReflectionVerticalOffsets[bridgeType - 1];
-        //LoadObjectHighBridgeReflectionPalette(objectEvent, sprite->oam.paletteNum);
-        LoadHighBridgeReflectionPalette(sprite);
+        LoadObjectEventPalette(OBJ_EVENT_PAL_TAG_10);
+        sprite->oam.paletteNum = IndexOfSpritePaletteTag(OBJ_EVENT_PAL_TAG_10);
+        UpdatePaletteGammaType(sprite->oam.paletteNum, GAMMA_NORMAL);
+        UpdateSpritePaletteWithWeather(sprite->oam.paletteNum);
     }
     else
     {
-        //LoadObjectRegularReflectionPalette(objectEvent, sprite->oam.paletteNum);
         LoadSpecialReflectionPalette(sprite);
     }
 }
@@ -93,6 +94,8 @@ void LoadSpecialReflectionPalette(struct Sprite *sprite)
     reflectionPalette.tag = GetSpritePaletteTagByPaletteNum(sprite->oam.paletteNum) + 0x1000;
     LoadSpritePalette(&reflectionPalette);
     sprite->oam.paletteNum = IndexOfSpritePaletteTag(reflectionPalette.tag);
+    UpdatePaletteGammaType(sprite->oam.paletteNum, GAMMA_ALT);
+    UpdateSpritePaletteWithWeather(sprite->oam.paletteNum);
 }
 
 void LoadHighBridgeReflectionPalette(struct Sprite *sprite)
@@ -105,18 +108,6 @@ void LoadHighBridgeReflectionPalette(struct Sprite *sprite)
 
     sprite->oam.paletteNum = IndexOfSpritePaletteTag(reflectionPalette.tag);
     UpdateSpritePaletteWithWeather(sprite->oam.paletteNum);
-}
-
-static void LoadObjectRegularReflectionPalette(struct ObjectEvent *objectEvent, u8 paletteIndex)
-{
-    const struct ObjectEventGraphicsInfo *graphicsInfo;
-
-    graphicsInfo = GetObjectEventGraphicsInfo(objectEvent->graphicsId);
-    if (graphicsInfo->paletteTag2 != OBJ_EVENT_PAL_TAG_NONE)
-    {
-        PatchObjectPalette(GetObjectPaletteTag(paletteIndex), paletteIndex);
-        UpdateSpritePaletteWithWeather(paletteIndex);
-    }
 }
 
 // When walking on a bridge high above water (Route 120), the reflection is a solid dark blue color.
@@ -1023,7 +1014,7 @@ void UpdateSurfBlobFieldEffect(struct Sprite *sprite)
     sprite->oam.priority = linkedSprite->oam.priority;
 }
 
-static void SynchroniseSurfAnim(struct ObjectEvent *objectEvent, struct Sprite *sprite)
+void SynchroniseSurfAnim(struct ObjectEvent *objectEvent, struct Sprite *sprite)
 {
     u8 surfBlobDirectionAnims[] = {
         [DIR_NONE] = 0,
@@ -1623,6 +1614,7 @@ void LoadFieldEffectPalette(u8 fieldEffect)
     if (spriteTemplate->paletteTag != 0xffff)
     {
         LoadObjectEventPalette(spriteTemplate->paletteTag);
+        UpdatePaletteGammaType(IndexOfSpritePaletteTag(spriteTemplate->paletteTag), GAMMA_NORMAL);
     }
 }
 
