@@ -2,7 +2,7 @@
   "id": "MAP_WOLFE_NURSERY",
   "name": "WolfeNursery",
   "layout": "LAYOUT_WOLFE_NURSERY",
-  "music": "MUS_DOORO1",
+  "music": "MUS_ROUTE101",
   "region_map_section": "MAPSEC_WOLFE_NURSERY",
   "requires_flash": false,
   "weather": "WEATHER_NONE",

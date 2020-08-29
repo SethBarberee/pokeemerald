@@ -2,7 +2,7 @@
   "id": "MAP_WOLFE_NURSERY_SHOP",
   "name": "WolfeNurseryShop",
   "layout": "LAYOUT_WOLFE_NURSERY_SHOP",
-  "music": "MUS_FRIENDLY",
+  "music": "MUS_POKE_MART",
   "region_map_section": "MAPSEC_WOLFE_NURSERY",
   "requires_flash": false,
   "weather": "WEATHER_NONE",
