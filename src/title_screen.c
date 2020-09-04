@@ -22,6 +22,7 @@
 #include "graphics.h"
 #include "constants/rgb.h"
 #include "constants/songs.h"
+#include "mgba.h"
 
 #define VERSION_BANNER_RIGHT_TILEOFFSET 64
 #define VERSION_BANNER_LEFT_X 98
@@ -609,6 +610,7 @@ void CB2_InitTitleScreen(void)
                                     | DISPCNT_OBJ_ON
                                     | DISPCNT_WIN0_ON
                                     | DISPCNT_OBJWIN_ON);
+        mgba_printf(3, "Testing new music");
         m4aSongNumStart(MUS_RG_TITLE);
         gMain.state = 5;
         break;

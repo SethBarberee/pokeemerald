@@ -23,6 +23,7 @@
 #include "intro.h"
 #include "main.h"
 #include "trainer_hill.h"
+#include "mgba.h"
 
 static void VBlankIntr(void);
 static void HBlankIntr(void);
@@ -167,6 +168,7 @@ void AgbMain()
         }
 
         PlayTimeCounter_Update();
+        mgba_open();
         MapMusicMain();
         WaitForVBlank();
     }
